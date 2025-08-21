@@ -120,7 +120,7 @@
     "Accept: */*\r\n" \
     "Host: %s\r\n" \
     "Connection: keep-alive\r\n" \
-    "Content-Type: text/html; charset=utf-8\r\n" \
+    "Content-Type: text/plain\r\n" \
     "%s" /* extra headers */\
     "content-length: %d\r\n" /* data length */\
     "\r\n" \
@@ -898,7 +898,6 @@ err_t httpc_post_next(const char* uri, u16_t data_len, const char *data, const h
 
   int req_len, req_len2;
   int use_host = 1;
-
 
   LWIP_ASSERT("request still exists", !req->request);
   LWIP_ASSERT("rx headers still exist", !req->rx_hdrs);

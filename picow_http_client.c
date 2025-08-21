@@ -15,8 +15,6 @@
 #define GET_REQUEST "/get_button"
 #define POST_REQUEST "/post_button"
 
-static async_at_time_worker_t request_worker;
-
 static int keep_alive_result_fn(EXAMPLE_HTTP_REQUEST_T *req, httpc_result_t httpc_result, u32_t rx_content_len, u32_t srv_res, err_t err) {
     char *data = "hello, i'm some new posted data";
     u16_t data_len = strlen(data) * sizeof(char);
@@ -55,8 +53,6 @@ int main() {
 
     int post_result = http_client_post_request_sync(cyw43_arch_async_context(), &req1, data_len, data);
 
-
-    int test = httpc_post_next(POST_REQUEST, strlen("does this work?"), "does this work?", &req1.settings, req1.http_state);
     // wait a bit to allow second request to come through
     sleep_ms(1000);
 
