@@ -13,9 +13,7 @@ def get_button():
 @app.route("/post_button", methods=["POST"])
 def post_button():
     data=request.data
-    print(data)
+    print("recieved data: ", data)
     return render_template("index.html", status="POST!")
 
-if __name__ == "__main__":
-    app.run(host="10.3.195.248", port=5000)
-
+#run with: python -m waitress --listen=10.3.195.248:5000 app:app

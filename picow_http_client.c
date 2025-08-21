@@ -15,47 +15,26 @@
 #define GET_REQUEST "/get_button"
 #define POST_REQUEST "/post_button"
 
-// Make the next request
-static void request_worker_fn(async_context_t *context, async_at_time_worker_t *worker) {
-    char *data = "hello, i'm some new posted data";
-    u16_t data_len = strlen(data) * sizeof(char);
-
-    EXAMPLE_HTTP_REQUEST_T *req = (EXAMPLE_HTTP_REQUEST_T*)worker->user_data;
-    httpc_post_next(POST_REQUEST, data_len, data, &req->settings, req->http_state);
-}
-
 static async_at_time_worker_t request_worker;
 
 static int keep_alive_result_fn(EXAMPLE_HTTP_REQUEST_T *req, httpc_result_t httpc_result, u32_t rx_content_len, u32_t srv_res, err_t err) {
-    printf("keep alive fn called!\n");
-
     char *data = "hello, i'm some new posted data";
     u16_t data_len = strlen(data) * sizeof(char);
-    //httpc_post_next(POST_REQUEST, data_len, data, &req->settings, req->http_state);
 
-    /*
-    async_context_remove_at_time_worker(req->context, &request_worker);
-    if (!err && httpc_result == HTTPC_RESULT_OK && (srv_res >= 200 && srv_res <= 299)) {
-        // repeat the request in 5s using the same connection
-        request_worker.user_data = req;
-        request_worker.do_work = request_worker_fn;
-        async_context_add_at_time_worker_in_ms(req->context, &request_worker, 5000);
-        return 1; // expect more
-    }
-    return 0; // stop  
-    */
-
-    // i think this keeps the connection alive
     httpc_post_next(POST_REQUEST, data_len, data, &req->settings, req->http_state);
-    return 1;
+
+    // dont keep the connection open after the second post
+    return 0;
 }
 
 int main() {
     stdio_init_all();
+
     if (cyw43_arch_init()) {
         printf("failed to initialise\n");
         return 1;
     }
+
     cyw43_arch_enable_sta_mode();
     if (cyw43_arch_wifi_connect_timeout_ms(WIFI_SSID, WIFI_PASSWORD, CYW43_AUTH_WPA2_AES_PSK, 30000)) {
         printf("failed to connect\n");
@@ -74,11 +53,12 @@ int main() {
     char *data = "hello, i'm some posted data";
     u16_t data_len = strlen(data) * sizeof(char);
 
-    int get_result = http_client_post_request_sync(cyw43_arch_async_context(), &req1, data_len, data);
+    int post_result = http_client_post_request_sync(cyw43_arch_async_context(), &req1, data_len, data);
 
-    sleep_ms(5000);
 
-    int keep_alive = httpc_post_next(POST_REQUEST, data_len, data, &req1.settings, req1.http_state);
+    int test = httpc_post_next(POST_REQUEST, strlen("does this work?"), "does this work?", &req1.settings, req1.http_state);
+    // wait a bit to allow second request to come through
+    sleep_ms(1000);
 
     cyw43_arch_deinit();
     printf("done.\n");

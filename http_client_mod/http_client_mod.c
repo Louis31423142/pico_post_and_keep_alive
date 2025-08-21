@@ -288,7 +288,7 @@ http_wait_headers(struct pbuf *p, u32_t *content_length, u16_t *total_header_len
 
     //content_len_hdr = pbuf_memfind(p, "content-length: ", 16, 0);
     content_len_hdr = pbuf_memfind(p, "Content-Length: ", 16, 0);
-    // aha! this is why it was failing ... Flask sends Content-Length
+    // Flask server capitalises
     if (content_len_hdr != 0xFFFF) {
       u16_t content_len_line_end = pbuf_memfind(p, "\r\n", 2, content_len_hdr);
       if (content_len_line_end != 0xFFFF) {
@@ -386,9 +386,8 @@ httpc_tcp_recv(void *arg, struct altcp_pcb *pcb, struct pbuf *p, err_t r)
         pbuf_free(p);
       }
     } else {
-      // I think this assertion is not needed in this case
+      // I think this assertion is not needed 
       //LWIP_ASSERT("content length not zero", req->rx_content_len == 0 && req->hdr_content_len == 0);
-      //printf("content length not zero\n");
     }
     if (req->rx_content_len < req->hdr_content_len) {
       LWIP_DEBUGF(HTTPC_DEBUG_TRACE, ("Got %u/%u\n", req->rx_content_len, req->hdr_content_len));
@@ -900,7 +899,6 @@ err_t httpc_post_next(const char* uri, u16_t data_len, const char *data, const h
   int req_len, req_len2;
   int use_host = 1;
 
-  httpc_free_state(req);
 
   LWIP_ASSERT("request still exists", !req->request);
   LWIP_ASSERT("rx headers still exist", !req->rx_hdrs);
