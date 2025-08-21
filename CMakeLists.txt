@@ -38,8 +38,7 @@ pico_sdk_init()
 
 add_subdirectory(http_client_mod)
 
-# Add executable. Default name is the project name, version 0.1
-
+# Add libary
 add_library(example_lwip_http_util INTERFACE)
 target_sources(example_lwip_http_util INTERFACE
         ${CMAKE_CURRENT_LIST_DIR}/example_http_client_util.c
@@ -53,6 +52,7 @@ target_include_directories(example_lwip_http_util INTERFACE
         ${CMAKE_CURRENT_LIST_DIR}
         )
 
+# Add executable
 add_executable(picow_http_client
         picow_http_client.c
         )

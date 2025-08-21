@@ -59,25 +59,12 @@ err_t http_client_receive_print_fn(__unused void *arg, __unused struct altcp_pcb
 
 
 static err_t internal_header_fn(httpc_state_t *connection, void *arg, struct pbuf *hdr, u16_t hdr_len, u32_t content_len) {
-    /*
-    assert(arg);
-    EXAMPLE_HTTP_REQUEST_T *req = (EXAMPLE_HTTP_REQUEST_T*)arg;
-    if (req->headers_fn) {
-        return req->headers_fn(connection, req->callback_arg, hdr, hdr_len, content_len);
-    }
-    */
     return ERR_OK;
 }
 
 static err_t internal_recv_fn(void *arg, struct altcp_pcb *conn, struct pbuf *p, err_t err) {
     assert(arg);
     EXAMPLE_HTTP_REQUEST_T *req = (EXAMPLE_HTTP_REQUEST_T*)arg;
-    /*
-    if (req->recv_fn) {
-        return req->recv_fn(req->callback_arg, conn, p, err);
-    }
-    */
-
     altcp_recved(conn, p->tot_len);
     pbuf_free(p);
     return ERR_OK;
