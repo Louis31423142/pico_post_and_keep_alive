@@ -16,4 +16,4 @@ def post_button():
     print("recieved data: ", data)
     return render_template("index.html", status="POST!")
 
-#run with: python -m waitress --listen=10.3.195.248:5000 app:app
+#run with: python -m waitress --listen={your computer's ip address}:5000 app:app
